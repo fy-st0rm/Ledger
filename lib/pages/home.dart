@@ -1,10 +1,14 @@
 import "package:flutter/material.dart";
+
 import "package:ledger/widgets/budget_widget.dart";
 import "package:ledger/widgets/records_widget.dart";
-import "package:ledger/widgets/new_transaction_widget.dart";
-import "package:ledger/transaction.dart";
-import "package:ledger/budget.dart";
-import "package:ledger/app_state.dart";
+
+import "package:ledger/pages/transaction_page.dart";
+
+import "package:ledger/types/transaction.dart";
+import "package:ledger/types/budget.dart";
+import "package:ledger/types/app_state.dart";
+
 import "package:ledger/utils.dart";
 
 class Home extends StatefulWidget {
@@ -40,14 +44,14 @@ class _Home extends State<Home> {
 				onPressed: () {
 					Navigator.of(context).push(
 						MaterialPageRoute(
-							builder: (context) => NewTransactionWidget(state: state)
+							builder: (context) => TransactionPage(state: state)
 						)
 					).then((_) => setState(() {}));
 				},
-				tooltip: 'Increment',
+				tooltip: 'Add transaction',
 				child: const Icon(Icons.add)
 			), // FloadingActionButton
 			floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-		);
+		); // Scaffold
 	}
 }

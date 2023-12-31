@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import "package:ledger/budget.dart";
+import "package:ledger/types/budget.dart";
 
 class CardWidget extends StatelessWidget {
 	final CardType ctype;

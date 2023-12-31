@@ -1,15 +1,29 @@
 import "package:flutter/material.dart";
 import "package:ledger/utils.dart";
-import "package:ledger/budget.dart";
+import "package:ledger/types/budget.dart";
 import "package:ledger/widgets/card_widget.dart";
 
-class BudgetWidget extends StatelessWidget {
+class BudgetWidget extends StatefulWidget{
 	final Budget budget;
 	const BudgetWidget(this.budget);
+
+	State<BudgetWidget> createState() => _BudgetWidget(budget);
+}
+
+class _BudgetWidget extends State<BudgetWidget> {
+	final Budget budget;
+	bool updated = false;
+	_BudgetWidget(this.budget);
 
 	@override
 	Widget build(BuildContext context) {
 		Pair<double, double> screen_size = get_screen_size(context);
+
+		// Initializing budget and updating the state afterward
+		budget.init(updated, setState);
+		setState(() {
+			updated = true; // Used this to not keep updating the state in a loop
+		});
 
 		return Scaffold(
 			body: ClipRRect(
