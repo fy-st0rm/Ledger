@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import "package:ledger/transaction.dart";
+import "package:ledger/types/transaction.dart";
 
 class Record extends StatelessWidget {
 	final Transaction transaction;
@@ -27,13 +27,27 @@ class Record extends StatelessWidget {
 	}
 }
 
-class RecordsWidget extends StatelessWidget {
+class RecordsWidget extends StatefulWidget {
 	final Transactions transactions;
-
 	const RecordsWidget(this.transactions);
+
+	State<RecordsWidget> createState() => _RecordsWidget(transactions);
+}
+
+class _RecordsWidget extends State<RecordsWidget> {
+	final Transactions transactions;
+	bool updated = false;
+
+	_RecordsWidget(this.transactions);
 
 	@override
 	Widget build(BuildContext context) {
+
+		transactions.init(updated, setState);
+		setState(() {
+			updated = true;
+		});
+
 		return Scaffold(
 			body: ClipRRect(
 				borderRadius: BorderRadius.circular(10),

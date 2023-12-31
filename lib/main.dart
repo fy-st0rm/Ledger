@@ -1,6 +1,5 @@
 import "package:flutter/material.dart";
-
-import "package:ledger/home.dart";
+import "package:ledger/pages/home.dart";
 
 void main() {
 	runApp(const App());
