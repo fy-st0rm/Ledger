@@ -1,16 +1,17 @@
 import "package:flutter/material.dart";
 import "package:ledger/types/budget.dart";
 
+Map<CardType, Color> card_color = {
+	CardType.WALLET: Colors.brown,
+	CardType.BANK: Colors.lightGreen,
+	CardType.KU_CARD: Colors.red,
+	CardType.ESEWA: Colors.green
+};
+
+
 class CardWidget extends StatelessWidget {
 	final CardType ctype;
 	final double budget;
-
-	Map<CardType, Color> card_color = {
-		CardType.WALLET: Colors.brown,
-		CardType.BANK: Colors.lightGreen,
-		CardType.KU_CARD: Colors.red,
-		CardType.ESEWA: Colors.green
-	};
 
 	CardWidget(this.ctype, this.budget);
 

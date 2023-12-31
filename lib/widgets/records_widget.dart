@@ -1,10 +1,36 @@
 import "package:flutter/material.dart";
 import "package:ledger/types/transaction.dart";
+import "package:ledger/types/budget.dart";
+import "package:ledger/widgets/card_widget.dart";
 
 class Record extends StatelessWidget {
 	final Transaction transaction;
 
 	const Record(this.transaction);
+
+	Widget get_card_icon(CardType ctype) {
+		return Container(
+			width: 30,
+			height: 30,
+			decoration: BoxDecoration(
+				borderRadius: BorderRadius.circular(10),
+				color: card_color[ctype],
+			) // BoxDecoration
+		); // Container
+	}
+
+	Widget get_arrow(TransactionType ttype) {
+		if (ttype == TransactionType.GAINED) {
+			return Icon(
+				Icons.keyboard_double_arrow_up_rounded,
+				color: Colors.green,
+			);
+		}
+		return Icon(
+			Icons.keyboard_double_arrow_down_rounded,
+			color: Colors.red,
+		);
+	}
 
 	@override
 	Widget build(BuildContext context) {
@@ -16,12 +42,32 @@ class Record extends StatelessWidget {
 					color: Color(0xFFD9D9D9),
 					borderRadius: BorderRadius.circular(10)
 				), // BoxDecorator
-				child: Center(
-					child: Text(
-						"${this.transaction.remark}",
-						style: TextStyle(fontSize: 40)
-					) // Text
-				) // Center
+				child: Padding(
+					padding: EdgeInsets.all(20),
+					child: Row(
+						children: <Widget> [
+							get_card_icon(transaction.ctype), // CardIcon
+							SizedBox(width: 10),
+							Column(
+								mainAxisAlignment: MainAxisAlignment.center,
+								children: <Widget> [
+									Text(
+										"${transaction.amount}"
+									),
+									get_arrow(transaction.ttype),
+								] // children
+							), // Column
+							SizedBox(width: 35),
+							Expanded(
+								child: Text(
+									"${this.transaction.remark}",
+									overflow: TextOverflow.ellipsis,
+									style: TextStyle(fontSize: 40)
+								) // Text
+							) // Expanded
+						] // children
+					) // Row
+				) // Padding
 			) // Container
 		); // Padding
 	}
