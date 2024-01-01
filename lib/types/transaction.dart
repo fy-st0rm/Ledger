@@ -57,6 +57,10 @@ class Transactions {
 			});
 	}
 
+	void clear() {
+		_transactions.clear();
+	}
+
 	bool create(Transaction t, Budget budget) {
 		double max = budget.get(t.ctype);
 

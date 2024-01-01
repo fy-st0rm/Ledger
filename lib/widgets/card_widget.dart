@@ -17,8 +17,7 @@ class CardWidget extends StatelessWidget {
 
 	@override
 	Widget build(BuildContext context) {
-		return Padding(
-			padding: EdgeInsets.all(5.0),
+		return Expanded(
 			child: Row(
 				mainAxisAlignment: MainAxisAlignment.start,
 				children: <Widget> [
@@ -33,16 +32,18 @@ class CardWidget extends StatelessWidget {
 					), // Container
 
 					SizedBox(width: 20),
-					Text(
-						"${budget}",
-						style: TextStyle(
-							fontSize: 30,
-							color: Colors.white
-						)
-					), // Text
+					Expanded(
+						child: Text(
+							"Rs. ${budget}",
+							style: TextStyle(
+								fontSize: 30,
+								color: Colors.white
+							)
+						), // Text
+					) // Expanded
 				] // children
 			), // Row
-		); // Padding
+		); // Expanded
 	}
 }
 
