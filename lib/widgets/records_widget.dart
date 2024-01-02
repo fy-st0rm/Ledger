@@ -8,17 +8,6 @@ class Record extends StatelessWidget {
 
 	const Record(this.transaction);
 
-	Widget get_card_icon(CardType ctype) {
-		return Container(
-			width: 30,
-			height: 30,
-			decoration: BoxDecoration(
-				borderRadius: BorderRadius.circular(10),
-				color: card_color[ctype],
-			) // BoxDecoration
-		); // Container
-	}
-
 	Widget get_arrow(TransactionType ttype) {
 		if (ttype == TransactionType.GAINED) {
 			return Icon(
@@ -43,10 +32,16 @@ class Record extends StatelessWidget {
 					borderRadius: BorderRadius.circular(10)
 				), // BoxDecorator
 				child: Padding(
-					padding: EdgeInsets.all(20),
+					padding: EdgeInsets.only(
+						left: 20, right: 20, top: 10, bottom: 10
+					),
 					child: Row(
 						children: <Widget> [
-							get_card_icon(transaction.ctype), // CardIcon
+							Image(
+								image: card_icon[transaction.ctype]!,
+								width: 25,
+								height: 25
+							), // Image
 							SizedBox(width: 10),
 							Column(
 								mainAxisAlignment: MainAxisAlignment.center,
@@ -55,12 +50,17 @@ class Record extends StatelessWidget {
 										"${transaction.amount}"
 									),
 									get_arrow(transaction.ttype),
+									Text(
+										"${transaction.date}-${transaction.day}",
+										overflow: TextOverflow.ellipsis,
+										style: TextStyle(fontSize: 12)
+									), // Text
 								] // children
 							), // Column
 							SizedBox(width: 35),
 							Expanded(
 								child: Text(
-									"${this.transaction.remark}",
+									"${transaction.remark}",
 									overflow: TextOverflow.ellipsis,
 									style: TextStyle(fontSize: 40)
 								) // Text

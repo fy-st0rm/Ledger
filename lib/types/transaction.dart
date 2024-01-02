@@ -15,8 +15,10 @@ class Transaction {
 	TransactionType ttype;
 	CardType ctype;
 	String remark;
+	String date; // year-month
+	int day;
 
-	Transaction(this.amount, this.ttype, this.ctype, this.remark);
+	Transaction(this.amount, this.ttype, this.ctype, this.remark, this.date, this.day);
 }
 
 class Transactions {
@@ -47,7 +49,9 @@ class Transactions {
 							double.parse(v["amount"]!),
 							tmap[v["ttype"]!]!,
 							cmap[v["ctype"]!]!,
-							v["remark"]!
+							v["remark"]!,
+							v["date"]!,
+							int.parse(v["day"]!)
 						);
 						_transactions.insert(int.parse(k), t);
 					});
@@ -95,7 +99,9 @@ class Transactions {
 				"amount": t.amount.toString(),
 				"ttype": t.ttype.label,
 				"ctype": t.ctype.label,
-				"remark": t.remark
+				"remark": t.remark,
+				"date": t.date,
+				"day": t.day.toString()
 			};
 		});
 		return json;

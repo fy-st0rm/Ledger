@@ -4,8 +4,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import "package:ledger/types/transaction.dart";
 import "package:ledger/utils.dart";
 
+class Total {
+	String date;
+	double amount;
+
+	Total(this.date, this.amount);
+}
+
 class Totals {
-	Map<String, double> _totals = Map();
+	List<Total> _totals = [];
 
 	void calculate_totals(Transactions trans) {
 		SharedPreferences
@@ -14,41 +21,69 @@ class Totals {
 				String? tot_str = pref.getString("totals");
 				_totals.clear();
 
-				if (!(tot_str == null || tot_str .isEmpty)) {
+				if (!(tot_str == null || tot_str.isEmpty)) {
 					Map<String, dynamic> totals = jsonDecode(tot_str!);
-					totals.forEach((k, v) {
-						_totals[k] = v;
-					});
+					totals
+						.keys
+						.toList()
+						.asMap()
+						.forEach((i, k) {
+							Total t = Total(k, totals[k]!);
+							_totals.insert(i, t);
+						});
 				}
 
 				DateTime now = DateTime.now();
 				int total_days = DateTime(now.year, now.month + 1, 0).day;
-				if (now.day < total_days) {
+				if (now.day >= total_days) {
 					_submit_totals(trans);
 				}
 			});
 	}
 
+	Map<String, double> to_json() {
+		Map<String, double> json = Map();
+		for (var i = 0; i < _totals.length; i++) {
+			Total t = _totals[i];
+			json[t.date] = t.amount;
+		}
+		return json;
+	}
+
 	Future<void> save() async {
 		SharedPreferences pref = await SharedPreferences.getInstance();
-		String tot_str = jsonEncode(_totals);
+		String tot_str = jsonEncode(to_json());
 		pref.setString('totals', tot_str);
+	}
+
+	bool _contains_date(String date) {
+		for (var i = 0; i < _totals.length; i++) {
+			Total t = _totals[i];
+			if (t.date == date)
+				return true;
+		}
+		return false;
 	}
 
 	void _submit_totals(Transactions trans) {
 		String curr_date = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
-		if (_totals.containsKey(curr_date))
+		if (_contains_date(curr_date))
 			return;
 
 		double total = 0;
 
 		for (var i = 0; i < trans.length(); i++) {
 			Transaction t = trans.get(i);
-			total += t.amount;
+
+			String curr_date = DateFormat('yyyy-MM').format(DateTime.now());
+			if (t.date == curr_date && t.ttype == TransactionType.SPENT) {
+				total += t.amount;
+			}
 		}
 
-		_totals[curr_date] = total;
+		Total t = Total(curr_date, total);
+		_totals.insert(0, t);
 
 		save();
 	}
@@ -57,11 +92,7 @@ class Totals {
 		return _totals.length;
 	}
 
-	Pair<String, double> get(int index) {
-		String key = _totals.keys.elementAt(index);
-		double value =  _totals.values.elementAt(index);
-
-		var p = Pair<String, double> (key, value);
-		return p;
+	Total get(int index) {
+		return _totals[index];
 	}
 }

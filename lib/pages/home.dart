@@ -5,6 +5,7 @@ import "package:ledger/widgets/records_widget.dart";
 
 import "package:ledger/pages/transaction_page.dart";
 import "package:ledger/pages/totals_page.dart";
+import "package:ledger/pages/load_page.dart";
 
 import "package:ledger/types/transaction.dart";
 import "package:ledger/types/budget.dart";
@@ -51,6 +52,20 @@ class _Home extends State<Home> {
 			floatingActionButton: Row(
 				mainAxisAlignment: MainAxisAlignment.center,
 				children: <Widget> [
+					FloatingActionButton(
+						onPressed: () {
+							Navigator.of(context).push(
+								MaterialPageRoute(
+									builder: (context) => LoadPage(state: state)
+								)
+							).then((_) => setState(() {}));
+						},
+						tooltip: 'Load',
+						child: const Icon(Icons.money)
+					), // FloadingActionButton
+
+					SizedBox(width: 50),
+
 					FloatingActionButton(
 						onPressed: () {
 							Navigator.of(context).push(

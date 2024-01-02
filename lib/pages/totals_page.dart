@@ -2,10 +2,10 @@ import "package:flutter/material.dart";
 import "package:ledger/types/totals.dart";
 import "package:ledger/utils.dart";
 
-class Total extends StatelessWidget {
-	final Pair<String, double> total;
+class TotalWidget extends StatelessWidget {
+	final Total total;
 
-	Total(this.total);
+	TotalWidget(this.total);
 
 	@override
 	Widget build(BuildContext context) {
@@ -22,13 +22,13 @@ class Total extends StatelessWidget {
 					child: Column(
 						children: <Widget> [
 							Text(
-								"${total.x}",
+								"${total.date}",
 								overflow: TextOverflow.ellipsis,
 								style: TextStyle(fontSize: 12)
 							), // Text
 							Expanded(
 								child: Text(
-									"Rs. ${total.y}",
+									"Rs. ${total.amount}",
 									overflow: TextOverflow.ellipsis,
 									style: TextStyle(fontSize: 40)
 								), // Text
@@ -81,7 +81,7 @@ class _TotalsPage extends State<TotalsPage> {
 												child: ListView.builder(
 													itemCount: totals.length(),
 													itemBuilder: (context, index) {
-														return Total(totals.get(index));
+														return TotalWidget(totals.get(index));
 													}
 												) // ListView.builder
 											), // Expanded

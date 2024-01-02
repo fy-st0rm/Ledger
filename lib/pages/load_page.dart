@@ -6,21 +6,23 @@ import "package:ledger/types/transaction.dart";
 import "package:ledger/types/app_state.dart";
 import "package:ledger/utils.dart";
 
-class TransactionPage extends StatefulWidget {
+class LoadPage extends StatefulWidget {
 	final AppState state;
-	const TransactionPage({super.key, required this.state});
+	const LoadPage({super.key, required this.state});
 
-	State<TransactionPage> createState() => _TransactionPage(state);
+	State<LoadPage> createState() => _LoadPage(state);
 }
 
-class _TransactionPage extends State<TransactionPage> {
-	final TextEditingController card_controller = TextEditingController();
-	final TextEditingController transaction_controller = TextEditingController();
+class _LoadPage extends State<LoadPage> {
+	final Transaction load_t = Transaction(0, TransactionType.GAINED, CardType.WALLET, "", "", 0);
+	final Transaction unload_t = Transaction(0, TransactionType.SPENT, CardType.WALLET, "", "", 0);
+
+	final TextEditingController card_controller_load = TextEditingController();
+	final TextEditingController card_controller_unload = TextEditingController();
 	final form_key = GlobalKey<FormState>();
 	final AppState state;
-	final Transaction final_transaction = Transaction(0, TransactionType.GAINED, CardType.WALLET, "", "", 0);
 
-	_TransactionPage(this.state);
+	_LoadPage(this.state);
 
 	@override
 	Widget build(BuildContext context) {
@@ -38,7 +40,7 @@ class _TransactionPage extends State<TransactionPage> {
 								Expanded(
 									child: Column(
 										children: <Widget> [
-											Text("Transaction",
+											Text("Load Money",
 												style: TextStyle(
 													fontSize: 44
 												) // TextStyle
@@ -50,7 +52,8 @@ class _TransactionPage extends State<TransactionPage> {
 												child: TextFormField(
 													keyboardType: TextInputType.number,
 													onSaved: (String? value) {
-														final_transaction.amount = double.parse(value!);
+														load_t.amount = double.parse(value!);
+														unload_t.amount = double.parse(value!);
 													},
 													decoration: InputDecoration(
 														labelText: "Amount",
@@ -68,7 +71,8 @@ class _TransactionPage extends State<TransactionPage> {
 											Expanded(
 												child: TextFormField(
 													onSaved: (String? value) {
-														final_transaction.remark = value!;
+														load_t.remark = value!;
+														unload_t.remark = value!;
 													},
 													decoration: InputDecoration(
 														labelText: "Remark",
@@ -84,36 +88,36 @@ class _TransactionPage extends State<TransactionPage> {
 											), // Expanded
 
 											Expanded(
-												child: DropdownMenu<TransactionType>(
-													initialSelection: TransactionType.GAINED,
-													controller: transaction_controller,
+												child: DropdownMenu<CardType>(
+													initialSelection: CardType.WALLET,
+													controller: card_controller_unload,
 													requestFocusOnTap: false,
-													label: Text("Transaction Type"),
-													onSelected: (TransactionType? transaction_type) {
+													label: Text("Load from"),
+													onSelected: (CardType? card_type) {
 														setState(() {
-															final_transaction.ttype = transaction_type!;
+															unload_t.ctype = card_type!;
 														});
 													},
-													dropdownMenuEntries: TransactionType.values.map<DropdownMenuEntry<TransactionType>>(
-														(TransactionType transaction_type) {
-															return DropdownMenuEntry<TransactionType>(
-																value: transaction_type,
-																label: transaction_type.label
+													dropdownMenuEntries: CardType.values.map<DropdownMenuEntry<CardType>>(
+														(CardType card_type) {
+															return DropdownMenuEntry<CardType>(
+																value: card_type,
+																label: card_type.label
 															);
 														}
 													).toList()
-												), // DropdownMenu<TransactionType>
+												), // DropdownMenu<CardType>
 											), // Expanded
 
 											Expanded(
 												child: DropdownMenu<CardType>(
 													initialSelection: CardType.WALLET,
-													controller: card_controller,
+													controller: card_controller_load,
 													requestFocusOnTap: false,
-													label: Text("Card Type"),
+													label: Text("Load to"),
 													onSelected: (CardType? card_type) {
 														setState(() {
-															final_transaction.ctype = card_type!;
+															load_t.ctype = card_type!;
 														});
 													},
 													dropdownMenuEntries: CardType.values.map<DropdownMenuEntry<CardType>>(
@@ -143,13 +147,14 @@ class _TransactionPage extends State<TransactionPage> {
 														form_key.currentState!.save();
 
 														String curr_date = DateFormat('yyyy-MM').format(DateTime.now());
-														final_transaction.date = curr_date;
-														final_transaction.day = DateTime.now().day;
+														unload_t.date = curr_date;
+														load_t.date = curr_date;
 
-														bool res = state.transactions.create(
-															final_transaction, state.budget
-														);
-														if (!res) {
+														unload_t.day = DateTime.now().day;
+														load_t.day = DateTime.now().day;
+
+														double max = state.budget.get(unload_t.ctype);
+														if (max < unload_t.amount) {
 															ScaffoldMessenger.of(context).showSnackBar(
 																const SnackBar(
 																	content: Text('Not enought money.',
@@ -159,6 +164,11 @@ class _TransactionPage extends State<TransactionPage> {
 																		) // TextStyle
 																	) // Text
 																), // SnackBar
+															);
+														} else {
+															state.budget.spent(unload_t.ctype, unload_t.amount);
+															bool res = state.transactions.create(
+																load_t, state.budget
 															);
 														}
 														Navigator.of(context, rootNavigator: true).pop();

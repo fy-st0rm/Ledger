@@ -1,13 +1,12 @@
 import "package:flutter/material.dart";
 import "package:ledger/types/budget.dart";
 
-Map<CardType, Color> card_color = {
-	CardType.WALLET: Colors.brown,
-	CardType.BANK: Colors.lightGreen,
-	CardType.KU_CARD: Colors.red,
-	CardType.ESEWA: Colors.green
+Map<CardType, AssetImage> card_icon = {
+	CardType.WALLET : AssetImage("assets/wallet.png"),
+	CardType.BANK   : AssetImage("assets/bank.png"),
+	CardType.KU_CARD: AssetImage("assets/ku_icon.png"),
+	CardType.ESEWA  : AssetImage("assets/esewa_icon.png")
 };
-
 
 class CardWidget extends StatelessWidget {
 	final CardType ctype;
@@ -22,15 +21,11 @@ class CardWidget extends StatelessWidget {
 				mainAxisAlignment: MainAxisAlignment.start,
 				children: <Widget> [
 					SizedBox(width: 40),
-					Container(
-						width: 30,
-						height: 30,
-						decoration: BoxDecoration(
-							borderRadius: BorderRadius.circular(10),
-							color: card_color[ctype],
-						) // BoxDecoration
-					), // Container
-
+					Image(
+						image: card_icon[ctype]!,
+						width: 25,
+						height: 25
+					), // Image
 					SizedBox(width: 20),
 					Expanded(
 						child: Text(
