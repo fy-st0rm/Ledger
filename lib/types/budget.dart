@@ -46,10 +46,17 @@ class Budget {
 
 	void gained(CardType ctype, double amount) {
 		_budget.update(ctype, (value) => _budget[ctype]! + amount);
+		save();
 	}
 
 	void spent(CardType ctype, double amount) {
-		_budget.update(ctype, (value) => _budget[ctype]! - amount);
+		_budget.update(ctype, (value) {
+			var a = _budget[ctype]! - amount;
+			if (a < 0)
+				return 0;
+			return a;
+		});
+		save();
 	}
 
 	Map<String, double> to_json() {

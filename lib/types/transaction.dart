@@ -84,6 +84,17 @@ class Transactions {
 		return true;
 	}
 
+	void remove(int index, Transaction t, Budget budget) {
+		if (t.ttype == TransactionType.GAINED) {
+			budget.spent(t.ctype, t.amount);
+		} else if (t.ttype == TransactionType.SPENT) {
+			budget.gained(t.ctype, t.amount);
+		}
+
+		_transactions.removeAt(index);
+		save();
+	}
+
 	int length() {
 		return this._transactions.length;
 	}

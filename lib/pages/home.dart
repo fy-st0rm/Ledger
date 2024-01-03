@@ -25,6 +25,10 @@ class _Home extends State<Home> {
 	AppState state = AppState();
 	Totals totals = Totals();
 
+	refresh() {
+		setState(() {});
+	}
+
 	@override
 	Widget build(BuildContext context) {
 
@@ -44,7 +48,7 @@ class _Home extends State<Home> {
 					children: <Widget> [
 						Container(height: 0.3 * screen_size.y, child: BudgetWidget(state.budget)),
 						SizedBox(height: 20),
-						Expanded(child: RecordsWidget(state.transactions)),
+						Expanded(child: RecordsWidget(state, refresh)),
 					]
 				), // Column
 			), // Padding

@@ -1,12 +1,16 @@
 import "package:flutter/material.dart";
 import "package:ledger/types/transaction.dart";
 import "package:ledger/types/budget.dart";
+import "package:ledger/types/app_state.dart";
 import "package:ledger/widgets/card_widget.dart";
 
 class Record extends StatelessWidget {
+	final int index;
 	final Transaction transaction;
+	final AppState state;
+	final Function() refresh;
 
-	const Record(this.transaction);
+	const Record(this.index, this.transaction, this.state, this.refresh);
 
 	Widget get_arrow(TransactionType ttype) {
 		if (ttype == TransactionType.GAINED) {
@@ -33,7 +37,7 @@ class Record extends StatelessWidget {
 				), // BoxDecorator
 				child: Padding(
 					padding: EdgeInsets.only(
-						left: 20, right: 20, top: 10, bottom: 10
+						left: 16, right: 16, top: 10, bottom: 10
 					),
 					child: Row(
 						children: <Widget> [
@@ -62,9 +66,27 @@ class Record extends StatelessWidget {
 								child: Text(
 									"${transaction.remark}",
 									overflow: TextOverflow.ellipsis,
-									style: TextStyle(fontSize: 40)
+									style: TextStyle(fontSize: 35)
 								) // Text
-							) // Expanded
+							), // Expanded
+							Column(
+								children: <Widget> [
+									Container(
+										width: 35,
+										height: 35,
+										child: FittedBox(
+											child: FloatingActionButton.small(
+												onPressed: () {
+													state.transactions.remove(index, transaction, state.budget);
+													refresh();
+												},
+												tooltip: 'Remove',
+												child: const Icon(Icons.remove)
+											), // FloadingActionButton
+										) // FittedBox
+									), // Container
+								] // children
+							) // Column
 						] // children
 					) // Row
 				) // Padding
@@ -74,22 +96,22 @@ class Record extends StatelessWidget {
 }
 
 class RecordsWidget extends StatefulWidget {
-	final Transactions transactions;
-	const RecordsWidget(this.transactions);
+	final AppState state;
+	final Function() refresh;
+	const RecordsWidget(this.state, this.refresh);
 
-	State<RecordsWidget> createState() => _RecordsWidget(transactions);
+	State<RecordsWidget> createState() => _RecordsWidget(state, refresh);
 }
 
 class _RecordsWidget extends State<RecordsWidget> {
-	final Transactions transactions;
 	bool updated = false;
-
-	_RecordsWidget(this.transactions);
+	final AppState state;
+	final Function() refresh;
+	_RecordsWidget(this.state, this.refresh);
 
 	@override
 	Widget build(BuildContext context) {
-
-		transactions.init(updated, setState);
+		state.transactions.init(updated, setState);
 		setState(() {
 			updated = true;
 		});
@@ -103,9 +125,9 @@ class _RecordsWidget extends State<RecordsWidget> {
 						children: <Widget> [
 							Expanded(
 								child: ListView.builder(
-									itemCount: this.transactions.length(),
+									itemCount: state.transactions.length(),
 									itemBuilder: (context, index) {
-										return Record(this.transactions.get(index));
+										return Record(index, state.transactions.get(index), state, refresh);
 									}
 								) // ListView.builder
 							) // Expanded
